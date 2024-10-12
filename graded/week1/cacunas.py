@@ -67,7 +67,7 @@ def my_dense_v(
       A_out (tf.Tensor or ndarray (m,j)) : m examples, j units
     """
     ### START CODE HERE ###
-    z: np.ndarray = A_in.T @ W + b
+    z: np.ndarray = A_in @ W + b
     A_out: np.ndarray = g(z)
     ### END CODE HERE ###
     return A_out
