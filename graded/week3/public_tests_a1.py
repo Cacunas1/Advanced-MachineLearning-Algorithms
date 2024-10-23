@@ -3,6 +3,7 @@ from keras.activations import linear, relu
 from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
 from keras.optimizers import Adam
+from keras.regularizers import l2
 
 
 def test_eval_mse(target):
@@ -92,11 +93,13 @@ def model_s_test(target, classes, input_size):
     
     assert len(target.layers) == 2, \
         f"Wrong number of layers. Expected 3 but got {len(target.layers)}"
-    assert target.input.shape == [None, input_size], \
-        f"Wrong input shape. Expected [None,  {input_size}] but got {target.input.shape}"
+    assert target.input_shape == (None, input_size), \
+        f"Wrong input shape. Expected (None,  {input_size}) but got {target.input_shape}"
     i = 0
-    expected = [[Dense, [None, 6], relu],
-                [Dense, [None, classes], linear]]
+    expected = [
+        [Dense, (None, 6), relu],
+        [Dense, (None, classes), linear]
+    ]
 
     for layer in target.layers:
         assert type(layer) is expected[i][0], \
@@ -122,11 +125,11 @@ def model_r_test(target, classes, input_size):
     print("ddd")
     assert len(target.layers) == 3, \
         f"Wrong number of layers. Expected 3 but got {len(target.layers)}"
-    assert target.input.shape == [None, input_size], \
-        f"Wrong input shape. Expected [None,  {input_size}] but got {target.input.shape}"
+    assert target.input_shape == (None, input_size), \
+        f"Wrong input shape. Expected [None,  {input_size}] but got {target.input_shape}"
     i = 0
-    expected = [[Dense, (None, 120), relu, (keras.regularizers.l2, 0.1)],
-                [Dense, (None, 40), relu, (keras.regularizers.l2, 0.1)],
+    expected = [[Dense, (None, 120), relu, (l2, 0.1)],
+                [Dense, (None, 40), relu, (l2, 0.1)],
                 [Dense, (None, classes), linear, None]]
 
     for layer in target.layers:
@@ -141,7 +144,7 @@ def model_r_test(target, classes, input_size):
             assert np.isclose(layer.kernel_regularizer.l2,  expected[i][3][1]), f"Wrong regularization factor. Expected {expected[i][3][1]}, but got {layer.kernel_regularizer.l2}"
         else:
             assert layer.kernel_regularizer is None, "You must not specify any regularizer for the 3th layer"
-        i = i + 1
+        i += 1
         
     assert type(target.loss) is SparseCategoricalCrossentropy, f"Wrong loss function. Expected {SparseCategoricalCrossentropy}, but got {target.loss}"
     assert type(target.optimizer) is Adam, f"Wrong loss function. Expected {Adam}, but got {target.optimizer}"
