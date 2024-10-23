@@ -1,4 +1,5 @@
 import logging
+import os
 
 import keras
 import matplotlib.pyplot as plt
@@ -8,6 +9,7 @@ from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
 from keras.models import Sequential
 from keras.optimizers import Adam
+from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
 
 import assigment_utils as utl
@@ -264,30 +266,36 @@ def main():
     # * loss with `SparseCategoricalCrossentropy`, remember to use  `from_logits=True`
     # * Adam optimizer with learning rate of 0.01.
 
-    tf.random.set_seed(1234)
-    model = Sequential(
-        [
-            ### START CODE HERE ###
-            Dense(120, activation="relu"),
-            Dense(40, activation="relu"),
-            Dense(6, activation="linear"),
+    model_fp: str = os.path.join(os.getcwd(), "models", "UNQ_C3.keras")
+
+    if os.path.isfile(model_fp):
+        model = keras.models.load_model(model_fp)
+    else:
+        tf.random.set_seed(1234)
+        model = Sequential(
+            [
+                ### START CODE HERE ###
+                Dense(120, activation="relu"),
+                Dense(40, activation="relu"),
+                Dense(6, activation="linear"),
+                ### END CODE HERE ### 
+            ], name="Complex"
+        )
+        model.compile(
+            ### START CODE HERE ### 
+            loss=SparseCategoricalCrossentropy(from_logits=True),
+            optimizer=Adam(0.01),
             ### END CODE HERE ### 
-        ], name="Complex"
-    )
-    model.compile(
-        ### START CODE HERE ### 
-        loss=SparseCategoricalCrossentropy(from_logits=True),
-        optimizer=Adam(0.01),
-        ### END CODE HERE ### 
-    )
-    # BEGIN UNIT TEST
-    print("-" * 80)
-    print("\tGraded Test 3:")
-    model.fit(
-        X_train, y_train,
-        epochs=1000
-    )
-    # END UNIT TEST
+        )
+        # BEGIN UNIT TEST
+        print("-" * 80)
+        print("\tGraded Test 3:")
+        model.fit(
+            X_train, y_train,
+            epochs=1000
+        )
+        model.save(model_fp)
+        # END UNIT TEST
 
     # + deletable=false editable=false
     # BEGIN UNIT TEST
@@ -323,25 +331,172 @@ def main():
     # * loss with `SparseCategoricalCrossentropy`, remember to use  `from_logits=True`
     # * Adam optimizer with learning rate of 0.01.
 
-    # + deletable=false
     # UNQ_C4
     # GRADED CELL: model_s
+    print("-" * 80)
+    print("\tGraded Test 4:")
+
+    model_fp: str = os.path.join(os.getcwd(), "models", "UNQ_C4.keras")
+
+    if os.path.isfile(model_fp):
+        model_s = keras.models.load_model(model_fp)
+    else:
+        tf.random.set_seed(1234)
+        model_s = Sequential(
+            [
+                ### START CODE HERE ###
+                Dense(6, activation="relu"),
+                Dense(6, activation="linear"),
+                ### END CODE HERE ###
+            ], name = "Simple"
+        )
+        model_s.compile(
+            ### START CODE HERE ###
+            loss=SparseCategoricalCrossentropy(from_logits=True),
+            optimizer=Adam(0.01),
+            ### START CODE HERE ### 
+        )
+
+        # BEGIN UNIT TEST
+        model_s.fit(
+            X_train,y_train,
+            epochs=1000
+        )
+        model_s.save(model_fp)
+        # END UNIT TEST
+
+    # BEGIN UNIT TEST
+    model_s.summary()
+
+    tst.model_s_test(model_s, classes, X_train.shape[1])
+    print("-" * 80)
+    # END UNIT TEST
+
+    #make a model for plotting routines to call
+    model_predict_s = lambda Xl: np.argmax(tf.nn.softmax(model_s.predict(Xl)).numpy(),axis=1)
+    utl.plt_nn(model_predict_s,X_train,y_train, classes, X_cv, y_cv, suptitle="Simple Model")
+
+    # This simple models does pretty well. Let's calculate the classification error.
+
+    training_cerr_simple = eval_cat_err(y_train, model_predict_s(X_train))
+    cv_cerr_simple = eval_cat_err(y_cv, model_predict_s(X_cv))
+    print(f"categorization error, training, simple model, {training_cerr_simple:0.3f}, complex model: {training_cerr_complex:0.3f}" )
+    print(f"categorization error, cv, simple model, {cv_cerr_simple:0.3f}, complex model: {cv_cerr_complex:0.3f}" )
+
+    # %% Part 5
+    print("=" * 80)
+    print_str: str = "=== Part 5"
+    print(print_str, "=" * (80 - len(print_str) - 1))
+    print("=" * 80)
+
+    # ### Exercise 5
+    #
+    # Reconstruct your complex model, but this time include regularization.
+    # Below, compose a three-layer model:
+    # * Dense layer with 120 units, relu activation, `kernel_regularizer=tf.keras.regularizers.l2(0.1)`
+    # * Dense layer with 40 units, relu activation, `kernel_regularizer=tf.keras.regularizers.l2(0.1)`
+    # * Dense layer with 6 units and a linear activation. 
+    # Compile using
+    # * loss with `SparseCategoricalCrossentropy`, remember to use  `from_logits=True`
+    # * Adam optimizer with learning rate of 0.01.
+
+    # + deletable=false
+    # UNQ_C5
+    # GRADED CELL: model_r
+    model_fp = os.path.join(os.getcwd(), "models", "UNQ_C5.keras")
+    
+    if os.path.isfile(model_fp):
+        model_r = keras.models.load_model(model_fp)
+    else:
+        tf.random.set_seed(1234)
+        model_r = Sequential(
+            [
+                ### START CODE HERE ### 
+                Dense(120, activation="relu", kernel_regularizer=l2(0.1)),
+                Dense(40, activation="relu", kernel_regularizer=l2(0.1)),
+                Dense(6, activation="linear"),
+                ### START CODE HERE ### 
+            ], name="Complex_Regularized"
+        )
+
+        print("-" * 80)
+        print("\tGraded Test 5:")
+        model_r.compile(
+            ### START CODE HERE ### 
+            loss=SparseCategoricalCrossentropy(from_logits=True),
+            optimizer=Adam(0.01),
+            ### START CODE HERE ### 
+        )
+
+
+        # + deletable=false editable=false
+        # BEGIN UNIT TEST
+        model_r.fit(
+            X_train, y_train,
+            epochs=1000
+        )
+        model_r.save(model_fp)
+        # END UNIT TEST
+
+    # + deletable=false editable=false
+    # BEGIN UNIT TEST
+    model_r.summary()
+
+    tst.model_r_test(model_r, classes, X_train.shape[1]) 
+    print("-" * 80)
+    # END UNIT TEST
+
+    model_predict_r = lambda Xl: np.argmax(tf.nn.softmax(model_r.predict(Xl)).numpy(),axis=1)
+     
+    utl.plt_nn(model_predict_r, X_train,y_train, classes, X_cv, y_cv, suptitle="Regularized")
+    # -
+
+    # The results look very similar to the 'ideal' model. Let's check classification error.
+
+    # + deletable=false editable=false
+    training_cerr_reg = eval_cat_err(y_train, model_predict_r(X_train))
+    cv_cerr_reg = eval_cat_err(y_cv, model_predict_r(X_cv))
+    test_cerr_reg = eval_cat_err(y_test, model_predict_r(X_test))
+    print(f"categorization error, training, regularized: {training_cerr_reg:0.3f}, simple model, {training_cerr_simple:0.3f}, complex model: {training_cerr_complex:0.3f}" )
+    print(f"categorization error, cv, regularized: {cv_cerr_reg:0.3f}, simple model, {cv_cerr_simple:0.3f}, complex model: {cv_cerr_complex:0.3f}" )
+    # -
+
+    # The simple model is a bit better in the training set than the regularized model but worse in the cross validation set.
+
+    # ## 7 - Iterate to find optimal regularization value
+    # As you did in linear regression, you can try many regularization values. This code takes several minutes to run. If you have time, you can run it and check the results. If not, you have completed the graded parts of the assignment!
 
     tf.random.set_seed(1234)
-    model_s = Sequential(
-        [
-            ### START CODE HERE ###
-            Dense(6, activation="relu"),
-            Dense(6, activation="linear"),
-            ### END CODE HERE ###
-        ], name = "Simple"
-    )
-    model_s.compile(
-        ### START CODE HERE ###
-        loss=SparseCategoricalCrossentropy(from_logits=True),
-        optimizer=Adam(0.01),
-        ### START CODE HERE ### 
-    )
+    lambdas = [0.0, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3]
+    models: list[keras.Model] = list()
+
+    for i in range(len(lambdas)):
+        lambda_ = lambdas[i]
+        models.append(
+            Sequential(
+                [
+                    Dense(120, activation = 'relu', kernel_regularizer=l2(lambda_)),
+                    Dense(40, activation = 'relu', kernel_regularizer=l2(lambda_)),
+                    Dense(classes, activation = 'linear')
+                ]
+            )
+        )
+        models[i].compile(
+            loss=SparseCategoricalCrossentropy(from_logits=True),
+            optimizer=Adam(0.01),
+        )
+
+        models[i].fit(X_train, y_train, epochs=1000)
+        print(f"Finished lambda = {lambda_}")
+
+    utl.plot_iterate(lambdas, models, X_train, y_train, X_cv, y_cv)
+
+    # As regularization is increased, the performance of the model on the training and cross-validation data sets converge. For this data set and model, lambda > 0.01 seems to be a reasonable choice.
+
+    # ### 7.1 Test
+    # Let's try our optimized models on the test set and compare them to 'ideal' performance. 
+
+    utl.plt_compare(X_test,y_test, classes, model_predict_s, model_predict_r, centers)
 
 
 if __name__ == "__main__":
