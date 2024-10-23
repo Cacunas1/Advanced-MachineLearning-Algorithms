@@ -1,16 +1,15 @@
-from collections.abc import Callable
 import logging
 import warnings
+from collections.abc import Callable
 
+import autils as utl
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 from keras import Sequential
-from keras.layers import Input, Dense
-
-import autils as utl
+from keras.layers import Dense, Input
 from public_tests import test_c1, test_c2, test_c3
+from tensorflow import keras
 
 
 def sigmoid(x):

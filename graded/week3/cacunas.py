@@ -1,9 +1,11 @@
 import logging
 import os
 
+import assigment_utils as utl
 import keras
 import matplotlib.pyplot as plt
 import numpy as np
+import public_tests_a1 as tst
 import tensorflow as tf
 from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
@@ -11,9 +13,6 @@ from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.regularizers import l2
 from sklearn.model_selection import train_test_split
-
-import assigment_utils as utl
-import public_tests_a1 as tst
 
 
 def eval_mse(y: np.ndarray, yhat: np.ndarray) -> float:

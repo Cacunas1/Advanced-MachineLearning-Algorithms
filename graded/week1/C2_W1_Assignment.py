@@ -51,10 +51,9 @@ import matplotlib.pyplot as plt
 # + deletable=false editable=false
 import numpy as np
 import tensorflow as tf
+from autils import *
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
-
-from autils import *
 
 # %matplotlib inline
 

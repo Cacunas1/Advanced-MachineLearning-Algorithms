@@ -1,19 +1,18 @@
 # UNIT TESTS
+import numpy as np
 import tensorflow as tf
-from tensorflow import keras
-
 from keras.activations import sigmoid as tf_keras_sigmoid
 from keras.layers import Dense
-
-import numpy as np
+from tensorflow import keras
 
 
 def test_c1(target: keras.Model):
     assert (
         len(target.layers) == 3
     ), f"Wrong number of layers. Expected 3 but got {len(target.layers)}"
-    assert (
-        target.input_shape == (None, 400)
+    assert target.input_shape == (
+        None,
+        400,
     ), f"Wrong input shape. Expected (None, 400) but got {target.input_shape}"
     i = 0
     expected = [

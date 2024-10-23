@@ -24,9 +24,6 @@ plt.style.use("./deeplearning.mplstyle")
 import logging
 
 import tensorflow as tf
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import Sequential
-
 from lab_coffee_utils import (
     load_coffee_data,
     plt_layer,
@@ -36,6 +33,8 @@ from lab_coffee_utils import (
     plt_roast,
 )
 from lab_utils_common import dlc
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
 
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 tf.autograph.set_verbosity(0)
