@@ -188,6 +188,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/nbformat-5.10.4-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.5-he02047a_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/nest-asyncio-1.6.0-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/networkx-3.4.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/notebook-shim-0.2.4-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-1.26.4-py312heda63a1_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.2-h488ebb8_0.conda
@@ -3503,6 +3504,26 @@ packages:
   license_family: BSD
   size: 11638
   timestamp: 1705850780510
+- kind: conda
+  name: networkx
+  version: 3.4.2
+  build: pyhd8ed1ab_0
+  subdir: noarch
+  noarch: python
+  url: https://conda.anaconda.org/conda-forge/noarch/networkx-3.4.2-pyhd8ed1ab_0.conda
+  sha256: ca60038a4820a0cc1a53fb7efd5c13261a789af4408203f51ab40b87f81a31a7
+  md5: 94058a2b67dc2dab4bc9a5b1b41037e5
+  depends:
+  - python >=3.10
+  constrains:
+  - pandas >=2.0
+  - matplotlib >=3.7
+  - numpy >=1.24
+  - scipy >=1.10,!=1.11.0,!=1.11.1
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 1198352
+  timestamp: 1729530897204
 - kind: conda
   name: notebook-shim
   version: 0.2.4
