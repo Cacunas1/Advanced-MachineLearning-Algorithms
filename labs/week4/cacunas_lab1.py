@@ -114,6 +114,19 @@ def main():
     )
     utl.generate_tree_viz([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], y_train, tree)
 
+    tree = list()
+    utl.build_tree_recursive(
+        X_train,
+        y_train,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "Root",
+        max_depth=2,
+        current_depth=0,
+        tree=tree,
+    )
+    utl.generate_tree_viz([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], y_train, tree)
+
+
     print("=" * 80)
 
 
