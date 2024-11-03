@@ -8,8 +8,9 @@ import numpy as np
 import tensorflow as tf
 from keras import Sequential
 from keras.layers import Dense, Input
-from public_tests import test_c1, test_c2, test_c3
 from tensorflow import keras
+
+from public_tests import test_c1, test_c2, test_c3
 
 
 def sigmoid(x):

@@ -34,6 +34,7 @@
 # Note that the H attains its higher value when $p = 0.5$. This means that the probability of event is $0.5$. And its minimum value is attained in $p = 0$ and $p = 1$, i.e., the probability of the event happening is totally predictable. Thus, the entropy shows the degree of predictability of an event.
 
 import numpy as np
+
 from utils import *
 
 # %matplotlib widget

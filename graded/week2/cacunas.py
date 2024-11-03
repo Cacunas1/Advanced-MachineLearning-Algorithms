@@ -3,10 +3,11 @@ import logging
 
 import autils as utl
 import numpy as np
-import public_tests as tst
 import tensorflow as tf
 from keras.layers import Dense, Input
 from keras.models import Sequential
+
+import public_tests as tst
 
 
 def my_softmax(z: np.ndarray) -> np.ndarray:

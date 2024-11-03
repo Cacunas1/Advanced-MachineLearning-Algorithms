@@ -63,6 +63,7 @@ tf.autograph.set_verbosity(0)
 
 from autils import *
 from lab_utils_softmax import plt_softmax
+
 from public_tests import *
 
 np.set_printoptions(precision=2)

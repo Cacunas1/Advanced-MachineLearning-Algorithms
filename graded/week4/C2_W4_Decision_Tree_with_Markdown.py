@@ -8,7 +8,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.16.4
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -50,6 +50,7 @@ import matplotlib.pyplot as plt
 
 # + deletable=false editable=false
 import numpy as np
+
 from public_tests import *
 from utils import *
 
@@ -223,7 +224,7 @@ print("Number of training examples (m):", len(X_train))
 # GRADED FUNCTION: compute_entropy
 
 
-def compute_entropy(y):
+def compute_entropy(y: np.ndarray) -> float:
     """
     Computes the entropy for
 
@@ -236,10 +237,18 @@ def compute_entropy(y):
 
     """
     # You need to return the following variables correctly
-    entropy = 0.0
+    entropy: float = 0.0
+    m: int = len(y)
 
     ### START CODE HERE ###
+    if m == 0:
+        return entropy
 
+    p1: float = len(y[y == 1]) / m
+    p0: float = 1.0 - p1
+    e1: float = p1 * np.log2(p1) if p1 > 0.0 else 0.0
+    e0: float = p0 * np.log2(p0) if p0 > 0.0 else 0.0
+    entropy = - (e1 + e0) if e1 not in {0.0, 1.0} else 0.0
     ### END CODE HERE ###
 
     return entropy
@@ -364,7 +373,7 @@ compute_entropy_test(compute_entropy)
 # GRADED FUNCTION: split_dataset
 
 
-def split_dataset(X, node_indices, feature):
+def split_dataset(X: np.ndarray, node_indices: list[int], feature: int) -> tuple[list, list]:
     """
     Splits the data at the given node into
     left and right branches
@@ -380,14 +389,18 @@ def split_dataset(X, node_indices, feature):
     """
 
     # You need to return the following variables correctly
-    left_indices = []
-    right_indices = []
+    left_indices: list = list()
+    right_indices: list = list()
 
     ### START CODE HERE ###
-
+    # include rows or data points in the dataset that the feature is class "1"
+    left_indices = [i for i in node_indices if X[i][feature] == 1]
+    # include rows or data points in the dataset that the feature is class "0"
+    right_indices = [i for i in node_indices if X[i][feature] == 0]
     ### END CODE HERE ###
 
     return left_indices, right_indices
+
 
 
 # -
@@ -506,34 +519,49 @@ split_dataset_test(split_dataset)
 # GRADED FUNCTION: compute_information_gain
 
 
-def compute_information_gain(X, y, node_indices, feature):
+def compute_information_gain(X: np.ndarray, y: np.ndarray, node_indices: list[int], feature: int) -> float:
     """
     Compute the information of splitting the node on a given feature
-
     Args:
         X (ndarray):            Data matrix of shape(n_samples, n_features)
         y (array like):         list or ndarray with n_samples containing the target variable
         node_indices (ndarray): List containing the active indices. I.e, the samples being considered in this step.
         feature (int):           Index of feature to split on
-
     Returns:
         cost (float):        Cost computed
-
-    """
+    """    
     # Split dataset
+    left_indices: list[int]
+    right_indices: list[int]
     left_indices, right_indices = split_dataset(X, node_indices, feature)
 
     # Some useful variables
-    X_node, y_node = X[node_indices], y[node_indices]
-    X_left, y_left = X[left_indices], y[left_indices]
-    X_right, y_right = X[right_indices], y[right_indices]
+    y_node: np.ndarray
+    y_left: np.ndarray
+    y_right: np.ndarray
+    y_node = y[node_indices]
+    y_left = y[left_indices]
+    y_right = y[right_indices]
 
     # You need to return the following variables correctly
-    information_gain = 0
+    information_gain: float = 0.0
 
     ### START CODE HERE ###
+    ml: int = len(left_indices)
+    mr: int = len(right_indices)
+    # w_left
+    wl: float = ml / (ml + mr)
+    # w_right
+    wr: float = mr / (ml + mr)
+    # H_node
+    H_node: float = compute_entropy(y_node)
+    # H_left
+    H_left: float = compute_entropy(y_left)
+    # H_right
+    H_right: float = compute_entropy(y_right)
 
-    ### END CODE HERE ###
+    information_gain = H_node - (wl * H_left + wr * H_right)
+    ### END CODE HERE ###  
 
     return information_gain
 
@@ -658,7 +686,7 @@ compute_information_gain_test(compute_information_gain)
 # GRADED FUNCTION: get_best_split
 
 
-def get_best_split(X, y, node_indices):
+def get_best_split(X: np.ndarray, y: np.ndarray, node_indices: list[int]) -> int:
     """
     Returns the optimal feature and threshold value
     to split the node data
@@ -671,15 +699,14 @@ def get_best_split(X, y, node_indices):
     Returns:
         best_feature (int):     The index of the best feature to split
     """
-
-    # Some useful variables
-    num_features = X.shape[1]
-
+    features: int = X.shape[1]
     # You need to return the following variables correctly
-    best_feature = -1
+    best_feature: int = -1
 
     ### START CODE HERE ###
-
+    gains: list[float] = [compute_information_gain(X, y, node_indices, f) for f in range(features)]
+    best: float = max(gains)
+    best_feature = gains.index(best) if best > 0.0 else best_feature
     ### END CODE HERE ##
 
     return best_feature
